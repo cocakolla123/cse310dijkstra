@@ -7,9 +7,10 @@
 #include "minheap.h"
 using namespace std;
 const double DOUBLE_MAX = 99999999.0;
+
 Graph::Graph() {
     // Constructor implementation
-    // set pointers to nullptr
+   
     // set variables to default values
     // Initialize numVertices, numEdges, and isDirected
     numVertices = 0;
@@ -18,7 +19,7 @@ Graph::Graph() {
     source = -1;
     graphTraversed = false;
     fullTraversal = false;
-
+     // set pointers to nullptr
     adjacencyLists = nullptr;
     extractedVertices = nullptr;
     relaxedVertices = nullptr;

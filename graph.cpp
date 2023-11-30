@@ -252,8 +252,112 @@ void Graph::runDijkstra(int newSource, int destination, int flag) {
     free(extracted);
 }
 
+void Graph::writePath(int s, int d) {
+    
+   if (!graphTraversed) {
+        cout << "Error: no path computation done" << endl;
+        return;
+    }
+
+    // Check for valid source-destination pair
+    if (s != source || d < 1 || d >= numVertices) {
+        cout << "Error: invalid source destination pair" << endl;
+        return;
+    }
+
+    // Case 1: Shortest s-d path is computed
+    if (extractedVertices[d] != -1.0) {
+        // Create an array to store the path
+        int* path = (int*)malloc(numVertices * sizeof(int));
+        int current = d;
+        int pathSize = 0;
+
+        // Reconstruct the path
+        while (current != s) {
+            path[pathSize] = current;
+            current = predecessor[current];
+            pathSize++;
+        }
+
+        path[pathSize] = s;
+
+        // Print the shortest path
+        cout << "Shortest path: ";
+        for (int i = pathSize; i >= 0; i--) {
+            cout << path[i] << " ";
+        }
+        cout << endl;
+
+        // Print the path weight
+        cout << std::fixed << std::setprecision(4) << "The path weight is:" << setw(13)   << distance[d] << endl;
+
+        // Deallocate memory for the path array
+        free(path);
+    }
+    // Case 2: s-d path computed but not known if it's the shortest
+    else if (relaxedVertices[d] != -1.0) {
+        // Create an array to store the path
+        int* path = (int*)malloc(numVertices * sizeof(int));
+        int current = d;
+        int pathSize = 0;
+
+        // Reconstruct the path
+        while (current != s) {
+            path[pathSize] = current;
+            current = predecessor[current];
+            pathSize++;
+        }
+
+        path[pathSize] = s;
+
+        // Print the path not known to be the shortest
+        cout << "Path not known to be shortest: ";
+        for (int i = pathSize; i >= 0; i--) {
+            cout << path[i] << " ";
+        }
+        cout << endl;
+
+        // Print the path weight
+        cout << std::fixed << std::setprecision(4) << "The path weight is:" << setw(13)   << distance[d] << endl;
+
+        // Deallocate memory for the path array
+        free(path);
+    }
+    // Case 3: No s-d path computed, and no min-heap operations were printed
+    else if (!fullTraversal) {
+        cout << "No " << s << "-" << d << " path has been computed, yet." << endl;
+    }
+    // Case 4: Entire graph has been traversed, and d is not in extracted or relaxed
+    else {
+        cout << "No " << s << "-" << d << " path exists." << endl;
+    }
+}
+
 void Graph::printAdjacencyLists() {
    
-  
+   // Loop through each vertex in the graph
+    for (int v = 0; v < numVertices; ++v) {
+        cout << "Adjacency list for vertex " << v << ": ";
+
+        // Check if the adjacency list for the current vertex exists
+        if (adjacencyLists[v] != nullptr) {
+            int j = 0;
+
+            // Loop through each edge in the adjacency list
+            while (adjacencyLists[v][j].destination != 0) {
+                // Print the destination vertex and edge weight
+                cout << "(" << adjacencyLists[v][j].destination << ", " << adjacencyLists[v][j].weight << ") ";
+
+                // Move to the next edge in the list
+                j++;
+            }
+        }
+
+        // Print the predecessor value for the current vertex
+        cout << "Predecessor: " << predecessor[v];
+
+        // Move to the next line for the next vertex
+        cout << endl;
+    }
 
 }

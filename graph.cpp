@@ -158,7 +158,98 @@ bool Graph::loadGraph(const string& filename, const string& direction) {
 }
 
 void Graph::runDijkstra(int newSource, int destination, int flag) {
-   
+   // Initialize variables and data structures
+    int n = numVertices;
+    source = newSource;
+    graphTraversed = true;
+    fullTraversal = true;
+
+    // Create arrays and data structures for Dijkstra's algorithm
+    bool* extracted = (bool*)malloc(n * sizeof(bool));
+    for (int i = 0; i < n; ++i) {
+        extracted[i] = false;
+        extractedVertices[i] = -1.0;
+        relaxedVertices[i] = -1.0;
+        predecessor[i] = -1;
+        distance[i] = DOUBLE_MAX;
+    }
+
+    // Mark the source as extracted
+    extracted[source] = true;
+
+    // Initialize the MinHeap data structure
+    minHeap.init(n);
+    distance[source] = 0;
+    minHeap.push(0, source);
+
+    // If flag is set, print initial insertion
+    if (flag == 1) {
+        cout << std::fixed << std::setprecision(4) << "Insert vertex " << source << ", key=" << setw(12)  << distance[source] << endl;
+    }
+
+    // Main Dijkstra's algorithm loop
+    while (!minHeap.empty()) {
+        // Extract the minimum distance vertex from the MinHeap
+        int u = minHeap.pop();
+
+        // Mark the vertex as extracted
+        extracted[u] = true;
+        extractedVertices[u] = distance[u];
+
+        // If flag is set, print deletion of vertex
+        if (flag == 1) {
+            cout << std::fixed << std::setprecision(4) << "Delete vertex " << u << ", key=" << setw(12) << distance[u] << endl;
+        }
+
+        // If the destination is reached, exit the loop
+        if (u == destination) {
+            break;
+        }
+
+        // Loop through the adjacency list of the current vertex
+        if (adjacencyLists[u] != nullptr) {
+            int j = 0;
+            while (adjacencyLists[u][j].destination != 0) {
+                // Extract neighbor information
+                int v = adjacencyLists[u][j].destination;
+                double w = adjacencyLists[u][j].weight;
+
+                // If the neighbor is not extracted and relaxation is possible
+                if (!extracted[v] && distance[u] + w < distance[v]) {
+                    // Perform relaxation
+                    double oldDistance = distance[v];
+                    distance[v] = distance[u] + w;
+                    predecessor[v] = u;
+                    relaxedVertices[v] = distance[v];
+
+                    // If flag is set, print decrease key operation
+                    if (oldDistance != DOUBLE_MAX && flag == 1) {
+                        cout  << "Decrease key of vertex " << v << ", from " << setw(12) << oldDistance << " to " << std::fixed << std::setprecision(4) << setw(12) << distance[v] << endl;
+                    }
+
+                    // Push the neighbor into the MinHeap
+                    minHeap.push(distance[v], v);
+
+                    // If flag is set, print insertion of vertex
+                    if (flag == 1) {
+                        cout << std::fixed << std::setprecision(4) << "Insert vertex " << v << ", key=" << setw(12) << distance[v] << endl;
+                    }
+                }
+                j++;
+            }
+        }
+    }
+
+    // Handle vertices left in MinHeap after the main loop
+    while (!minHeap.empty()) {
+        int u = minHeap.pop();
+        if (!extracted[u]) {
+            fullTraversal = false;
+        }
+    }
+
+    // Deallocate memory for extracted array
+    free(extracted);
 }
 
 void Graph::printAdjacencyLists() {

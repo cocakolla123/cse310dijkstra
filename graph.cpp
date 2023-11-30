@@ -59,6 +59,36 @@ Graph::~Graph() {
 }
 
 bool Graph::loadGraph(const string& filename, const string& direction) {
+    ifstream file(filename);
+    if (!file.is_open()) {
+        cout << "Failed to open the graph file." << endl;
+        return false;
+    }
+
+    string line;
+    if (!getline(file, line)) {
+        cout << "Input file is empty." << endl;
+        return false;
+    }
+
+    istringstream iss(line);
+    int n, m;
+    if (!(iss >> n >> m)) {
+        cout << "Invalid format for the first line in the input file." << endl;
+        return false;
+    }
+    numVertices = n + 1;
+    numEdges = m;
+
+    adjacencyLists = new Edge*[numVertices];
+    for (int i = 0; i < numVertices; ++i) {
+        adjacencyLists[i] = nullptr;
+    }
+
+    extractedVertices = (double*)malloc(numVertices * sizeof(double));
+    relaxedVertices = (double*)malloc(numVertices * sizeof(double));
+    predecessor = (int*)malloc(numVertices * sizeof(int));
+    distance = (double*)malloc(numVertices * sizeof(double));
     
    
 }

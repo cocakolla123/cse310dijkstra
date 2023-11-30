@@ -31,7 +31,7 @@ Graph::Graph() {
 Graph::~Graph() {
     // Destructor implementation
     // deallocate memory for arrays
-    // Free individual adjacency lists
+    
     // Free the vector of adjacency lists
     if (extractedVertices != nullptr) {
         delete[] extractedVertices;
@@ -45,6 +45,7 @@ Graph::~Graph() {
     if (distance != nullptr) {
         delete[] distance;
     }
+    // Free individual adjacency lists
     if (adjacencyLists != nullptr) {
         for (int i = 0; i < numVertices; ++i) {
             if (adjacencyLists[i] != nullptr) {
